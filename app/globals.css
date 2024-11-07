@@ -14,3 +14,14 @@ body {
 .container {
   @apply max-w-7xl mx-auto px-4;
 }
+
+
+@layer utilities {
+  .group:hover .group-hover\:scale-110 {
+    transform: scale(1.1);
+  }
+  
+  .group:hover .group-hover\:translate-x-0 {
+    transform: translateX(0);
+  }
+}

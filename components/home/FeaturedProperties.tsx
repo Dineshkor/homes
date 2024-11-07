@@ -1,3 +1,4 @@
+'use client'
 import PropertyCard from '@/components/property/PorpertyCard'
 import Link from 'next/link'
 
