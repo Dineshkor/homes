@@ -1,37 +1,51 @@
 'use client'
 import { useState } from 'react'
 import Image from 'next/image'
-import { FaPhone, FaEnvelope, FaWhatsapp, FaStar } from 'react-icons/fa'
+import { FaStar, FaPhone, FaEnvelope, FaWhatsapp } from 'react-icons/fa'
 
 interface PropertyContactProps {
   agent: {
     name: string
+    image: string
     phone: string
     email: string
-    image: string
     rating?: number
     experience?: string
-    properties?: number
+    properties?: string
   }
 }
 
 export default function PropertyContact({ agent }: PropertyContactProps) {
-  const [message, setMessage] = useState('')
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: 'I am interested in this property. Please contact me.'
+  })
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    // Simulate API call
+    // TODO: Add API integration
     await new Promise(resolve => setTimeout(resolve, 1000))
     setIsSubmitting(false)
-    setMessage('')
-    // Show success message (you can implement a toast notification here)
+    setFormData(prev => ({
+      ...prev,
+      message: 'I am interested in this property. Please contact me.'
+    }))
   }
 
   return (
     <div className="bg-white rounded-lg shadow-md">
-      {/* Agent Info */}
+      {/* Agent Info Section - Referenced from existing code */}
       <div className="p-6 border-b">
         <div className="flex items-center space-x-4">
           <div className="relative h-16 w-16 rounded-full overflow-hidden">
@@ -58,92 +72,99 @@ export default function PropertyContact({ agent }: PropertyContactProps) {
           </div>
         </div>
 
-        {/* Agent Stats */}
-        <div className="grid grid-cols-2 gap-4 mt-4">
-          <div className="bg-gray-50 p-3 rounded-lg">
-            <div className="text-lg font-semibold">{agent.experience || '5+ Years'}</div>
-            <div className="text-sm text-gray-600">Experience</div>
-          </div>
-          <div className="bg-gray-50 p-3 rounded-lg">
-            <div className="text-lg font-semibold">{agent.properties || '50+'}</div>
-            <div className="text-sm text-gray-600">Properties</div>
-          </div>
+        {/* Quick Contact Options */}
+        <div className="mt-6 grid grid-cols-2 gap-3">
+          <a
+            href={`tel:${agent.phone}`}
+            className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+          >
+            <FaPhone className="mr-2 text-primary" />
+            <span>Call</span>
+          </a>
+          <a
+            href={`https://wa.me/${agent.phone.replace(/\D/g, '')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+          >
+            <FaWhatsapp className="mr-2 text-green-500" />
+            <span>WhatsApp</span>
+          </a>
         </div>
-      </div>
-
-      {/* Contact Buttons */}
-      <div className="p-6 border-b space-y-3">
-        <a 
-          href={`tel:${agent.phone}`}
-          className="flex items-center justify-center space-x-2 w-full py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
-        >
-          <FaPhone />
-          <span>{agent.phone}</span>
-        </a>
-        <a 
-          href={`https://wa.me/${agent.phone.replace(/[^0-9]/g, '')}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center space-x-2 w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-        >
-          <FaWhatsapp />
-          <span>WhatsApp</span>
-        </a>
-        <a 
-          href={`mailto:${agent.email}`}
-          className="flex items-center justify-center space-x-2 w-full py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-        >
-          <FaEnvelope />
-          <span>Email</span>
-        </a>
       </div>
 
       {/* Contact Form */}
-      <form onSubmit={handleSubmit} className="p-6">
-        <h3 className="font-semibold mb-4">Send Message</h3>
-        <div className="space-y-4">
+      <div className="p-6">
+        <h4 className="text-lg font-medium mb-4">Send Message</h4>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Your Message
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              Your Name
             </label>
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              rows={4}
-              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-              placeholder="I'm interested in this property..."
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
               required
             />
           </div>
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+              Message
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows={4}
+              value={formData.message}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
+              required
+            />
+          </div>
+
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full py-2 px-4 rounded-lg text-white font-medium
-              ${isSubmitting 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-primary hover:bg-primary-dark'
-              } transition-colors`}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
           >
-            {isSubmitting ? (
-              <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Sending...
-              </span>
-            ) : (
-              'Send Message'
-            )}
+            {isSubmitting ? 'Sending...' : 'Send Message'}
           </button>
-        </div>
-      </form>
-
-      {/* Privacy Note */}
-      <div className="px-6 pb-6">
-        <p className="text-xs text-gray-500 text-center">
-          By sending a message, you agree to our Terms of Service and Privacy Policy
-        </p>
+        </form>
       </div>
     </div>
   )

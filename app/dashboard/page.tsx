@@ -2,6 +2,7 @@ import DashboardStats from '@/components/dashboard/DashboardStats'
 import StatsChart from '@/components/dashboard/StatsChart'
 import RecentActivity from '@/components/dashboard/RecentActivity'
 import SavedProperties from '@/components/dashboard/SavedProperties'
+import PropertyListing from '@/components/dashboard/PropertyListing'
 
 export default function DashboardPage() {
   return (
@@ -11,6 +12,7 @@ export default function DashboardPage() {
       </div>
 
       <DashboardStats />
+      <PropertyListing />
       <StatsChart />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
