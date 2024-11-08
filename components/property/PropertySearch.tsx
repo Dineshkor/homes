@@ -1,10 +1,17 @@
 'use client'
-import { useState } from 'react'
-import { FaSearch, FaMapMarkerAlt, FaHome } from 'react-icons/fa'
+import { FaMapMarkerAlt, FaHome } from 'react-icons/fa'
+import { usePropertyStore } from '@/lib/propertyStore'
 
 export default function PropertySearch() {
-  const [location, setLocation] = useState('')
-  const [propertyType, setPropertyType] = useState('')
+  const { searchQuery, setSearchQuery } = usePropertyStore()
+
+  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery({ location: e.target.value })
+  }
+
+  const handlePropertyTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSearchQuery({ propertyType: e.target.value })
+  }
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg max-w-4xl w-full">
@@ -19,8 +26,8 @@ export default function PropertySearch() {
             <input
               type="text"
               id="location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
+              value={searchQuery.location}
+              onChange={handleLocationChange}
               placeholder="Where do you want to live?"
               className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"
             />
@@ -36,8 +43,8 @@ export default function PropertySearch() {
             <FaHome className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <select
               id="propertyType"
-              value={propertyType}
-              onChange={(e) => setPropertyType(e.target.value)}
+              value={searchQuery.propertyType}
+              onChange={handlePropertyTypeChange}
               className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary bg-white text-gray-900"
             >
               <option value="" className="text-gray-500">Select property type</option>
@@ -49,30 +56,7 @@ export default function PropertySearch() {
             </select>
           </div>
         </div>
-
-        {/* Search Button */}
-        <button
-          type="submit"
-          className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition-colors flex items-center justify-center md:self-end md:mb-0.5"
-        >
-          <FaSearch className="mr-2" />
-          Search
-        </button>
       </form>
-
-      {/* Popular Searches */}
-      <div className="mt-4 flex flex-wrap gap-2">
-        <span className="text-sm text-gray-600">Popular:</span>
-        {['Dehradun', 'Mussoorie', 'Rishikesh', 'Haridwar'].map((place) => (
-          <button
-            key={place}
-            onClick={() => setLocation(place)}
-            className="text-sm text-primary hover:text-primary-dark"
-          >
-            {place}
-          </button>
-        ))}
-      </div>
     </div>
   )
 }

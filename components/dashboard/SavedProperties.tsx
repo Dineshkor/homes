@@ -2,65 +2,18 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { FaHeart, FaShare, FaBed, FaBath, FaRulerCombined } from 'react-icons/fa'
-
-interface SavedProperty {
-  id: string
-  title: string
-  address: string
-  price: number
-  image: string
-  beds: number
-  baths: number
-  sqft: number
-  savedAt: string
-}
-
-// Sample data - replace with actual data from your API
-const savedProperties: SavedProperty[] = [
-  {
-    id: 'prop1',
-    title: 'Modern Apartment with City View',
-    address: '123 City Center, London',
-    price: 450000,
-    image: '/images/properties/property-1.jpg', // Add your image path
-    beds: 2,
-    baths: 2,
-    sqft: 1200,
-    savedAt: '2024-01-07T10:30:00Z'
-  },
-  {
-    id: 'prop2',
-    title: 'Luxury Villa with Pool',
-    address: '456 Suburb Street, Manchester',
-    price: 850000,
-    image: '/images/properties/property-2.jpg', // Add your image path
-    beds: 4,
-    baths: 3,
-    sqft: 2800,
-    savedAt: '2024-01-06T15:45:00Z'
-  },
-  {
-    id: 'prop3',
-    title: 'Cozy Family Home',
-    address: '789 Quiet Lane, Birmingham',
-    price: 350000,
-    image: '/images/properties/property-3.jpg', // Add your image path
-    beds: 3,
-    baths: 2,
-    sqft: 1800,
-    savedAt: '2024-01-05T09:15:00Z'
-  }
-]
+import { FaHeart, FaBed, FaBath, FaRulerCombined } from 'react-icons/fa'
+import { usePropertyStore, formatPrice, type Property } from '@/lib/propertyStore'
+import { properties } from '../property/PropertyGrid'
 
 export default function SavedProperties() {
+  const { favorites } = usePropertyStore()
   const [showAll, setShowAll] = useState(false)
-  const displayedProperties = showAll ? savedProperties : savedProperties.slice(0, 2)
 
-  // Format price with commas and currency symbol
-  const formatPrice = (price: number) => {
-    return `£${price.toLocaleString()}`
-  }
+  // Get saved properties from the store's favorites array
+  // This assumes you have a properties array in your store or API
+  const savedProperties = properties.filter(prop => favorites.includes(prop.id))
+  const displayedProperties = showAll ? savedProperties : savedProperties.slice(0, 2)
 
   // Format date to relative time
   const getRelativeTime = (timestamp: string) => {
@@ -93,7 +46,6 @@ export default function SavedProperties() {
               key={property.id}
               className="flex space-x-4 bg-white rounded-lg overflow-hidden border hover:shadow-md transition-shadow"
             >
-              {/* Property Image */}
               <div className="relative h-24 w-24 flex-shrink-0">
                 <Image
                   src={property.image}
@@ -103,7 +55,6 @@ export default function SavedProperties() {
                 />
               </div>
 
-              {/* Property Details */}
               <div className="flex-1 min-w-0 py-2 pr-4">
                 <div className="flex items-center justify-between">
                   <Link 
@@ -113,11 +64,11 @@ export default function SavedProperties() {
                     {property.title}
                   </Link>
                   <span className="text-xs text-gray-500">
-                    Saved {getRelativeTime(property.savedAt)}
+                    Saved {getRelativeTime(property.listedAt || '')}
                   </span>
                 </div>
 
-                <p className="text-sm text-gray-500 truncate">{property.address}</p>
+                <p className="text-sm text-gray-500 truncate">{property.location}</p>
                 
                 <div className="mt-2 flex items-center justify-between">
                   <span className="text-lg font-semibold text-primary">
@@ -127,11 +78,11 @@ export default function SavedProperties() {
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center text-sm text-gray-500">
                       <FaBed className="h-4 w-4 mr-1" />
-                      {property.beds}
+                      {property.features.bedrooms}
                       <FaBath className="h-4 w-4 mx-1 ml-2" />
-                      {property.baths}
+                      {property.features.bathrooms}
                       <FaRulerCombined className="h-4 w-4 mx-1 ml-2" />
-                      {property.sqft} sq ft
+                      {property.features.area} sq ft
                     </div>
                   </div>
                 </div>

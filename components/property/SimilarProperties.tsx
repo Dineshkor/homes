@@ -3,49 +3,8 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FaBed, FaBath, FaRulerCombined, FaArrowRight } from 'react-icons/fa'
-
-// This would typically come from an API
-const similarProperties = [
-  {
-    id: '2',
-    title: 'Modern Villa in Dehradun',
-    location: 'Rajpur Road, Dehradun',
-    price: 18000000,
-    image: '/images/properties/property-2.jpg',
-    features: {
-      bedrooms: 3,
-      bathrooms: 2,
-      area: 1800
-    },
-    type: 'Villa'
-  },
-  {
-    id: '3',
-    title: 'Luxury Apartment with Valley View',
-    location: 'Mall Road, Mussoorie',
-    price: 15000000,
-    image: '/images/properties/property-3.jpg',
-    features: {
-      bedrooms: 4,
-      bathrooms: 3,
-      area: 2200
-    },
-    type: 'Apartment'
-  },
-  {
-    id: '4',
-    title: 'Riverside Cottage',
-    location: 'Rishikesh',
-    price: 12000000,
-    image: '/images/properties/property-4.jpg',
-    features: {
-      bedrooms: 2,
-      bathrooms: 2,
-      area: 1500
-    },
-    type: 'Cottage'
-  }
-]
+import { usePropertyStore, formatPrice, type Property } from '@/lib/propertyStore'
+import { properties } from './PropertyGrid'
 
 interface SimilarPropertiesProps {
   currentPropertyId: string
@@ -54,19 +13,13 @@ interface SimilarPropertiesProps {
 export default function SimilarProperties({ currentPropertyId }: SimilarPropertiesProps) {
   const [isScrollable, setIsScrollable] = useState(false)
   
-  const formatPrice = (price: number) => {
-    if (price >= 10000000) {
-      return `₹${(price / 10000000).toFixed(2)} Cr`
-    } else if (price >= 100000) {
-      return `₹${(price / 100000).toFixed(2)} Lac`
-    }
-    return `₹${price.toLocaleString()}`
-  }
-
-  // Filter out current property
-  const filteredProperties = similarProperties.filter(
-    property => property.id !== currentPropertyId
-  )
+  // Filter out current property and get similar properties by type
+  const currentProperty = properties.find(p => p.id === currentPropertyId)
+  const filteredProperties = properties.filter(
+    property => 
+      property.id !== currentPropertyId && 
+      property.type === currentProperty?.type
+  ).slice(0, 3)
 
   return (
     <div className="bg-white rounded-lg shadow-md">
@@ -150,17 +103,6 @@ export default function SimilarProperties({ currentPropertyId }: SimilarProperti
             </Link>
           ))}
         </div>
-      </div>
-
-      {/* View More Link - Mobile */}
-      <div className="p-6 border-t text-center md:hidden">
-        <Link 
-          href="/properties" 
-          className="inline-flex items-center space-x-2 text-primary hover:text-primary-dark"
-        >
-          <span>View All Properties</span>
-          <FaArrowRight className="h-4 w-4" />
-        </Link>
       </div>
     </div>
   )
