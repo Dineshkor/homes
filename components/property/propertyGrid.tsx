@@ -13,27 +13,6 @@ import {
 } from 'react-icons/fa'
 import { usePropertyStore, formatPrice, Property } from '@/lib/propertyStore'
 
-// This would come from your API/database
-export const properties: Property[] = [
-  {
-    id: '1',
-    title: 'Luxury Villa in Dehradun',
-    description: 'Beautiful 4 bedroom villa with mountain views and modern amenities.',
-    price: 25000000,
-    location: 'Rajpur Road, Dehradun',
-    image: '/images/properties/property-1.jpg',
-    features: {
-      bedrooms: 4,
-      bathrooms: 3,
-      area: 2500,
-    },
-    type: 'Villa',
-    isNew: true,
-    isFeatured: true
-  }
-  // ... rest of the properties
-]
-
 export default function PropertyGrid() {
   const { 
     viewMode, 
@@ -41,8 +20,10 @@ export default function PropertyGrid() {
     sortBy, 
     setSortBy, 
     favorites, 
-    toggleFavorite 
+    toggleFavorite,
+    properties 
   } = usePropertyStore()
+
 
   return (
     <div>

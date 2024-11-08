@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import PropertyForm from '@/components/dashboard/PropertyForm'
 import { useRouter } from 'next/navigation'
+import { Property } from '@/lib/propertyStore'
 
 interface PageProps {
   params: {
@@ -63,7 +64,7 @@ export default function EditPropertyPage({ params }: PageProps) {
 
  // ... existing code ...
 
-const handleSubmit = async (formData: Partial<PropertyData>) => {
+const  handleSubmit = async (formData: Partial<Property>) => {
     setIsSubmitting(true)
     try {
       // TODO: Add API call to update property

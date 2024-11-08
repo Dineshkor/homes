@@ -1,10 +1,13 @@
 import PropertySearch from '@/components/property/PropertySearch'
 import PropertyFilters from '@/components/property/PropertyFilters'
 import PropertyGrid from '@/components/property/PropertyGrid'
+import Header from '@/components/layout/Header'
+import Footer from '@/components/layout/Footer'
 
 export default function PropertiesPage() {
   return (
     <div className="min-h-screen bg-gray-50">
+      <Header />
       {/* Hero Section with Search */}
       <div className="bg-primary text-white py-12">
         <div className="container mx-auto px-4">
@@ -32,6 +35,7 @@ export default function PropertiesPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

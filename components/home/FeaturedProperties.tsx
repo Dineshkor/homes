@@ -20,7 +20,7 @@ interface Property {
 }
 
 // Sample data
-const featuredProperties: Property[] = [
+export const featuredProperties: Property[] = [
   {
     id: '1',
     title: 'Luxury Villa in Dehradun',

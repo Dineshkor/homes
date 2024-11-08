@@ -1,139 +1,180 @@
 'use client'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { featuredProperties } from '@/components/home/FeaturedProperties'
 
-// Property Types
 export interface Property {
   id: string
   title: string
   description: string
   price: number
-  location: string
+  location: string | {
+    address: string
+    city: string
+    state: string
+    coordinates?: {
+      lat: number
+      lng: number
+    }
+  }
   image: string
   features: {
     bedrooms: number
     bathrooms: number
     area: number
+    parking?: number
+    furnished?: string
+    floor?: string
   }
   type: string
+  status?: 'active' | 'pending' | 'sold'
   isNew?: boolean
   isFeatured?: boolean
-  status?: 'active' | 'pending' | 'sold'
   listedAt?: string
   views?: number
+  amenities?: string[]
+  images?: string[]
+  agent?: {
+    name: string
+    phone: string
+    email: string
+    image: string
+  }
 }
 
-// Store State Interface
 interface PropertyState {
-  // View Preferences
+  // View state
   viewMode: 'grid' | 'list'
   sortBy: 'newest' | 'price-asc' | 'price-desc'
-  
-  // User Preferences
   favorites: string[]
-  
-  // Search State
+  properties: Property[]
+
+  // Search state
   searchQuery: {
     location: string
     propertyType: string
+    priceRange?: {
+      min: number
+      max: number
+    }
+    features?: {
+      bedrooms?: number
+      bathrooms?: number
+      minArea?: number
+    }
+    amenities?: string[]
   }
-  
-  // Filter State
+
+  // Filter state
   filters: {
     priceRange: string[]
     propertyType: string[]
     bedrooms: string[]
-    bathrooms: string[]
-    furnishing: string[]
     amenities: string[]
-    areaRange: string[]
-    facing: string[]
-    possession: string[]
   }
 
   // Actions
   setViewMode: (mode: 'grid' | 'list') => void
   setSortBy: (sort: PropertyState['sortBy']) => void
   toggleFavorite: (propertyId: string) => void
+  
+  // Property actions
+  addProperty: (property: Property) => void
+  updateProperty: (id: string, updates: Partial<Property>) => void
+  deleteProperty: (id: string) => void
+  setProperties: (properties: Property[]) => void
+
+  // Search actions
   setSearchQuery: (query: Partial<PropertyState['searchQuery']>) => void
+  resetSearchQuery: () => void
+
+  // Filter actions
   setFilters: (filters: Partial<PropertyState['filters']>) => void
   resetFilters: () => void
 }
 
-// Create Store
 export const usePropertyStore = create<PropertyState>()(
   persist(
     (set) => ({
-      // Initial State
+      // Initial state
       viewMode: 'grid',
       sortBy: 'newest',
       favorites: [],
+      properties: featuredProperties,
       searchQuery: {
         location: '',
-        propertyType: ''
+        propertyType: '',
       },
       filters: {
         priceRange: [],
         propertyType: [],
         bedrooms: [],
-        bathrooms: [],
-        furnishing: [],
         amenities: [],
-        areaRange: [],
-        facing: [],
-        possession: []
       },
 
-      // Actions
+      // View actions
       setViewMode: (mode) => set({ viewMode: mode }),
-      
       setSortBy: (sort) => set({ sortBy: sort }),
-      
-      toggleFavorite: (propertyId) =>
+      toggleFavorite: (propertyId) => 
         set((state) => ({
           favorites: state.favorites.includes(propertyId)
             ? state.favorites.filter(id => id !== propertyId)
             : [...state.favorites, propertyId]
         })),
 
-      setSearchQuery: (query) =>
+      // Property actions
+      addProperty: (property) =>
+        set((state) => ({
+          properties: [...state.properties, property]
+        })),
+      updateProperty: (id, updates) =>
+        set((state) => ({
+          properties: state.properties.map(p =>
+            p.id === id ? { ...p, ...updates } : p
+          )
+        })),
+      deleteProperty: (id) =>
+        set((state) => ({
+          properties: state.properties.filter(p => p.id !== id)
+        })),
+      setProperties: (properties) => set({ properties }),
+
+      // Search actions
+      setSearchQuery: (query) => 
         set((state) => ({
           searchQuery: { ...state.searchQuery, ...query }
         })),
+      resetSearchQuery: () => 
+        set({ 
+          searchQuery: { location: '', propertyType: '' }
+        }),
 
-      setFilters: (newFilters) =>
+      // Filter actions
+      setFilters: (filters) =>
         set((state) => ({
-          filters: { ...state.filters, ...newFilters }
+          filters: { ...state.filters, ...filters }
         })),
-
       resetFilters: () =>
-        set((state) => ({
+        set({
           filters: {
             priceRange: [],
             propertyType: [],
             bedrooms: [],
-            bathrooms: [],
-            furnishing: [],
             amenities: [],
-            areaRange: [],
-            facing: [],
-            possession: []
           }
-        }))
+        })
     }),
     {
-      name: 'property-store',
-      version: 1
+      name: 'property-store'
     }
   )
 )
 
-// Utility function for price formatting
+// Utility functions
 export const formatPrice = (price: number) => {
-  if (price >= 10000000) {
-    return `₹${(price / 10000000).toFixed(2)} Cr`
-  } else if (price >= 100000) {
-    return `₹${(price / 100000).toFixed(2)} Lac`
-  }
-  return `₹${price.toLocaleString()}`
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0
+  }).format(price)
 }

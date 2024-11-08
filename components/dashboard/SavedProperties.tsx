@@ -4,14 +4,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FaHeart, FaBed, FaBath, FaRulerCombined } from 'react-icons/fa'
 import { usePropertyStore, formatPrice, type Property } from '@/lib/propertyStore'
-import { properties } from '../property/PropertyGrid'
 
 export default function SavedProperties() {
-  const { favorites } = usePropertyStore()
+  const { favorites, properties } = usePropertyStore()
   const [showAll, setShowAll] = useState(false)
 
   // Get saved properties from the store's favorites array
-  // This assumes you have a properties array in your store or API
   const savedProperties = properties.filter(prop => favorites.includes(prop.id))
   const displayedProperties = showAll ? savedProperties : savedProperties.slice(0, 2)
 
@@ -19,12 +17,21 @@ export default function SavedProperties() {
   const getRelativeTime = (timestamp: string) => {
     const date = new Date(timestamp)
     const now = new Date()
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-    
-    if (diffInSeconds < 60) return 'just now'
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`
-    return `${Math.floor(diffInSeconds / 86400)}d ago`
+    const diff = now.getTime() - date.getTime()
+
+    const minutes = Math.floor(diff / 60000)
+    const hours = Math.floor(minutes / 60)
+    const days = Math.floor(hours / 24)
+
+    if (days > 0) {
+      return `${days} day${days === 1 ? '' : 's'} ago`
+    } else if (hours > 0) {
+      return `${hours} hour${hours === 1 ? '' : 's'} ago`
+    } else if (minutes > 0) {
+      return `${minutes} minute${minutes === 1 ? '' : 's'} ago`
+    } else {
+      return 'Just now'
+    }
   }
 
   return (
@@ -39,9 +46,8 @@ export default function SavedProperties() {
             View all
           </Link>
         </div>
-
         <div className="space-y-6">
-          {displayedProperties.map((property) => (
+          {displayedProperties.map((property: Property) => (
             <div 
               key={property.id}
               className="flex space-x-4 bg-white rounded-lg overflow-hidden border hover:shadow-md transition-shadow"
@@ -68,7 +74,11 @@ export default function SavedProperties() {
                   </span>
                 </div>
 
-                <p className="text-sm text-gray-500 truncate">{property.location}</p>
+                <p className="text-sm text-gray-500 truncate">
+                  {typeof property.location === 'string' 
+                    ? property.location 
+                    : `${property.location.address}, ${property.location.city}, ${property.location.state}`}
+                </p>
                 
                 <div className="mt-2 flex items-center justify-between">
                   <span className="text-lg font-semibold text-primary">

@@ -4,13 +4,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FaBed, FaBath, FaRulerCombined, FaArrowRight } from 'react-icons/fa'
 import { usePropertyStore, formatPrice, type Property } from '@/lib/propertyStore'
-import { properties } from './PropertyGrid'
 
 interface SimilarPropertiesProps {
   currentPropertyId: string
 }
 
 export default function SimilarProperties({ currentPropertyId }: SimilarPropertiesProps) {
+  const { properties } = usePropertyStore()
   const [isScrollable, setIsScrollable] = useState(false)
   
   // Filter out current property and get similar properties by type
@@ -69,7 +69,9 @@ export default function SimilarProperties({ currentPropertyId }: SimilarProperti
                       {property.title}
                     </h3>
                     <p className="text-gray-600 text-sm">
-                      {property.location}
+                      {typeof property.location === 'string' 
+                        ? property.location
+                        : `${property.location.address}, ${property.location.city}, ${property.location.state}`}
                     </p>
                   </div>
 

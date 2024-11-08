@@ -1,26 +1,10 @@
 'use client'
 import { FaBed, FaBath, FaRulerCombined, FaParking, FaCouch, FaBuilding } from 'react-icons/fa'
 import { MdVerified } from 'react-icons/md'
+import { type Property } from '@/lib/propertyStore'
 
 interface PropertyDetailsProps {
-  property: {
-    title: string
-    description: string
-    price: number
-    location: {
-      address: string
-      city: string
-      state: string
-    }
-    features: {
-      bedrooms: number
-      bathrooms: number
-      area: number
-      parking: number
-      furnished: string
-      floor: string
-    }
-  }
+  property: Property
 }
 
 export default function PropertyDetails({ property }: PropertyDetailsProps) {
@@ -48,8 +32,12 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
 
       {/* Location */}
       <div className="text-gray-600 mb-6">
-        <p>{property.location.address}</p>
-        <p>{property.location.city}, {property.location.state}</p>
+        <p>{typeof property.location === 'string' ? property.location : property.location.address}</p>
+        <p>
+          {typeof property.location === 'string' 
+            ? ''
+            : `${property.location.city}, ${property.location.state}`}
+        </p>
       </div>
 
       {/* Price */}
