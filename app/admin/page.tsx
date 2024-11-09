@@ -2,6 +2,7 @@
 import AdminRecentActivity from "@/components/admin/AdminRecentActivity";
 import AdminStats from "@/components/admin/AdminStats";
 import AdminUserList from "@/components/admin/AdminUserList";
+import AnalyticsChart from "@/components/admin/AnalyticsCharts";
 import { useState } from "react";
 import { FaBuilding, FaUsers, FaChartLine, FaEnvelope } from "react-icons/fa";
 
@@ -83,7 +84,9 @@ export default function AdminDashboardPage() {
               Recent Inquiries
             </h2>
           </div>
-          <div className="p-6">{/* Add InquiryList component here */}</div>
+          <div className="p-6">
+            <AdminRecentActivity />
+          </div>
         </div>
 
         {/* Analytics Chart */}
@@ -93,7 +96,9 @@ export default function AdminDashboardPage() {
               Revenue Analytics
             </h2>
           </div>
-          <div className="p-6">{/* Add AnalyticsChart component here */}</div>
+          <div className="p-6">
+            <AnalyticsChart />
+          </div>
         </div>
       </div>
     </div>
