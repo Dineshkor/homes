@@ -1,41 +1,41 @@
+'use client'
+import { useState } from 'react'
+import { usePropertyStore } from '@/lib/propertyStore'
+import PropertyTypeToggle from '@/components/property/PropertyTypeToggle'
 import PropertySearch from '@/components/property/PropertySearch'
-import PropertyFilters from '@/components/property/PropertyFilters'
 import PropertyGrid from '@/components/property/PropertyGrid'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
+import PropertyFilters from '@/components/property/PropertyFilters'
 
 export default function PropertiesPage() {
+  const { listingType } = usePropertyStore()
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-      {/* Hero Section with Search */}
-      <div className="bg-primary text-white py-12">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            Find Your Perfect Property
-          </h1>
-          <p className="text-white/90 mb-8 max-w-2xl">
-            Explore our wide range of properties in Uttarakhand. From mountain views to riverside homes, find your ideal property.
-          </p>
-          <PropertySearch />
-        </div>
+    <div className="container mx-auto px-4 py-8">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-4">
+          Properties for {listingType === 'BUY' ? 'Sale' : 'Rent'}
+        </h1>
+        <PropertyTypeToggle />
+      </div>
+
+      {/* Search and Filters */}
+      <div className="mb-8">
+        <PropertySearch />
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Filters Sidebar */}
-          <div className="lg:w-1/4">
-            <PropertyFilters />
-          </div>
+      <div className="flex flex-col md:flex-row gap-8">
+        {/* Filters Sidebar */}
+        <div className="w-full md:w-1/4">
+          <PropertyFilters />
+        </div>
 
-          {/* Property Grid */}
-          <div className="lg:w-3/4">
-            <PropertyGrid />
-          </div>
+        {/* Property Grid */}
+        <div className="w-full md:w-3/4">
+          <PropertyGrid />
         </div>
       </div>
-      <Footer />
     </div>
   )
 }

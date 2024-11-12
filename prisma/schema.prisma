@@ -12,3 +12,79 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// User Model
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  properties    Property[]  // Properties listed by the user
+  favorites     Property[]  @relation("UserFavorites")
+  inquiries     Inquiry[]
+}
+
+// Property Model
+model Property {
+  id          String    @id @default(cuid())
+  title       String
+  description String      @db.Text
+  price       Float
+  rentalPrice Float?
+  listingType ListingType
+  location    Json      // Stores address, city, state, coordinates
+  images      String[]
+  features    Json      // Stores bedrooms, bathrooms, area, etc.
+  amenities   String[]
+  type        String      // Apartment, House, Villa, etc.
+  status      Status    @default(ACTIVE)
+  isNew       Boolean   @default(true)
+  isFeatured  Boolean   @default(false)
+  views       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String    // Owner/Agent
+  user        User      @relation(fields: [userId], references: [id])
+  favoritedBy User[]    @relation("UserFavorites")
+  inquiries   Inquiry[]
+}
+
+// Inquiry Model
+model Inquiry {
+  id          String    @id @default(cuid())
+  message     String
+  status      InquiryStatus @default(PENDING)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String
+  propertyId  String
+  user        User      @relation(fields: [userId], references: [id])
+  property    Property  @relation(fields: [propertyId], references: [id])
+}
+
+enum Role {
+  USER
+  AGENT
+  ADMIN
+}
+
+enum ListingType {
+  BUY
+  RENT
+}
+
+enum Status {
+  ACTIVE
+  PENDING
+  SOLD
+  RENTED
+}
+
+enum InquiryStatus {
+  PENDING
+  RESPONDED
+  CLOSED
+}
