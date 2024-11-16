@@ -69,3 +69,39 @@ export async function PATCH(
     return apiResponse(null, 'Failed to update property', 500)
   }
 } 
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const user = await auth(req)
+    const property = await prisma.property.findUnique({
+      where: { id: params.id }
+    })
+
+    if (!property) {
+      return apiResponse(null, 'Property not found', 404)
+    }
+
+    if (!user || (user.id !== property.userId && user.role !== 'ADMIN')) {
+      return apiResponse(null, 'Unauthorized', 401)
+    }
+
+    // Delete associated inquiries first due to foreign key constraints
+    await prisma.inquiry.deleteMany({
+      where: { propertyId: params.id }
+    })
+
+    // Delete the property
+    await prisma.property.delete({
+      where: { id: params.id }
+    })
+
+    return apiResponse({ success: true })
+
+  } catch (error) {
+    console.error('Error deleting property:', error)
+    return apiResponse(null, 'Failed to delete property', 500)
+  }
+}

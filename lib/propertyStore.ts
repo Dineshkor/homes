@@ -1,6 +1,6 @@
 'use client'
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { 
   Property, 
   ListingType, 
@@ -102,7 +102,8 @@ export const usePropertyStore = create<PropertyState>()(
         })),
       deleteProperty: (id) =>
         set((state) => ({
-          properties: state.properties.filter(p => p.id !== id)
+          properties: state.properties.filter(p => p.id !== id),
+          favorites: state.favorites.filter(fId => fId !== id)
         })),
 
       // Filter actions
@@ -123,7 +124,16 @@ export const usePropertyStore = create<PropertyState>()(
     }),
     {
       name: 'property-store',
+      storage: createJSONStorage(() => localStorage),
       version: 1,
+      partialize: (state) => ({
+        favorites: state.favorites,
+        viewMode: state.viewMode,
+        sortBy: state.sortBy,
+        listingType: state.listingType
+      })
     }
   )
 )
+
+

@@ -4,15 +4,21 @@ import PropertyFeatures from '@/components/property/PropertyFeatures'
 import PropertyLocation from '@/components/property/PropertyLocation'
 import PropertyContact from '@/components/property/PropertyContact'
 import SimilarProperties from '@/components/property/SimilarProperties'
+import { Property } from '@/types'
+import { ListingType } from '@/types'
 
 // This is temporary data. Will be replaced with API call later
-const propertyData = {
+const propertyData: Property = {
   id: '1',
-  title: 'Luxury Villa in Mussoorie',
-  description: 'Beautiful 4 bedroom villa with panoramic valley views...',
-  price: 25000000,
+  title: 'Luxury Villa',
+  description: 'Beautiful luxury villa with mountain views',
+  price: 1500000,
+  image: '/images/property-1.jpg',
+  type: 'Villa',
+  status: 'active',
+  listingType: 'RENT',
   location: {
-    address: 'Happy Valley, Mussoorie',
+    address: '123 Mountain View Road',
     city: 'Mussoorie',
     state: 'Uttarakhand',
     coordinates: {
@@ -23,38 +29,24 @@ const propertyData = {
   features: {
     bedrooms: 4,
     bathrooms: 3,
-    area: 2500,
+    area: 3500,
     parking: 2,
-    furnished: 'Semi',
-    floor: '2nd'
+    furnished: 'Fully',
+    floor: 'Ground'
   },
-  amenities: [
-    'Swimming Pool',
-    'Garden',
-    'Security',
-    'Power Backup',
-    'Modular Kitchen',
-    'Valley View'
-  ],
+  amenities: ['Swimming Pool', 'Garden', 'Security', 'Power Backup'],
   images: [
-    '/images/properties/property-1-1.jpg',
-    '/images/properties/property-1-2.jpg',
-    '/images/properties/property-1-3.jpg',
-    '/images/properties/property-1-4.jpg'
-  ],
-  agent: {
-    name: 'Rahul Kumar',
-    phone: '+91 98765 43210',
-    email: 'rahul@ukhomes.com',
-    image: '/images/agents/agent-1.jpg'
-  }
-}
+    '/images/property-1.jpg',
+    '/images/property-1-2.jpg',
+    '/images/property-1-3.jpg'
+  ]
+};
 
 export default function PropertyPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Property Gallery */}
-      <PropertyGallery images={propertyData.images} />
+      <PropertyGallery images={propertyData.images || []} />
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -69,9 +61,7 @@ export default function PropertyPage() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-8">
-            <PropertyContact agent={propertyData.agent} />
-          </div>
+          
         </div>
 
         {/* Similar Properties */}

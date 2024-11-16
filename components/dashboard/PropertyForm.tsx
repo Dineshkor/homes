@@ -1,69 +1,98 @@
-'use client'
-import { useState } from 'react'
-import { 
-    FaUpload, FaBed, FaBath, FaRulerCombined, FaParking, FaCouch, FaBuilding,
-    FaSwimmingPool, FaWifi, FaTree, FaVideo, FaLock, FaFan, FaFireExtinguisher,
-    FaRegClock, FaDumbbell, FaUtensils, FaPowerOff, FaCheck
-  } from 'react-icons/fa'
+"use client";
+import { useState } from "react";
+import {
+  FaUpload,
+  FaBed,
+  FaBath,
+  FaRulerCombined,
+  FaParking,
+  FaCouch,
+  FaBuilding,
+  FaSwimmingPool,
+  FaWifi,
+  FaTree,
+  FaVideo,
+  FaLock,
+  FaFan,
+  FaFireExtinguisher,
+  FaRegClock,
+  FaDumbbell,
+  FaUtensils,
+  FaPowerOff,
+  FaCheck,
+} from "react-icons/fa";
 
-import { Property } from '@/lib/propertyStore'
+import { Property } from "@/types";
 
 interface PropertyFormProps {
-  onSubmit: (data: Partial<Property>) => void
-  isLoading?: boolean
-  initialData?: Partial<Property>
+  onSubmit: (data: Partial<Property>) => void;
+  isLoading?: boolean;
+  initialData?: Partial<Property>;
 }
 
 // Add this after the PropertyFormProps interface
 const amenityIcons: { [key: string]: any } = {
-  'Swimming Pool': FaSwimmingPool,
-  'WiFi': FaWifi,
-  'Garden': FaTree,
-  'CCTV': FaVideo,
-  'Security': FaLock,
-  'Air Conditioning': FaFan,
-  'Fire Safety': FaFireExtinguisher,
-  '24/7 Access': FaRegClock,
-  'Gym': FaDumbbell,
-  'Modular Kitchen': FaUtensils,
-  'Power Backup': FaPowerOff
-}
+  "Swimming Pool": FaSwimmingPool,
+  WiFi: FaWifi,
+  Garden: FaTree,
+  CCTV: FaVideo,
+  Security: FaLock,
+  "Air Conditioning": FaFan,
+  "Fire Safety": FaFireExtinguisher,
+  "24/7 Access": FaRegClock,
+  Gym: FaDumbbell,
+  "Modular Kitchen": FaUtensils,
+  "Power Backup": FaPowerOff,
+};
 
-
-export default function PropertyForm({ onSubmit, isLoading, initialData }: PropertyFormProps) {
+export default function PropertyForm({
+  onSubmit,
+  isLoading,
+  initialData,
+}: PropertyFormProps) {
   const [formData, setFormData] = useState({
-    title: initialData?.title || '',
-    description: initialData?.description || '',
+    title: initialData?.title || "",
+    description: initialData?.description || "",
     price: initialData?.price || 0,
-    type: initialData?.type || '',
-    status: initialData?.status || 'active',
-    location: typeof initialData?.location === 'string' 
-    ? {
-        address: initialData?.location || '',
-        city: '',
-        state: 'Uttarakhand'
-      }
-    : {
-        address: initialData?.location?.address || '',
-        city: initialData?.location?.city || '',
-        state: 'Uttarakhand'
-      },
+    type: initialData?.type || "",
+    status: initialData?.status || "active",
+    location:
+      typeof initialData?.location === "string"
+        ? {
+            address: initialData?.location || "",
+            city: "",
+            state: "Uttarakhand",
+          }
+        : {
+            address: initialData?.location?.address || "",
+            city: initialData?.location?.city || "",
+            state: "Uttarakhand",
+          },
     features: {
       bedrooms: initialData?.features?.bedrooms || 0,
       bathrooms: initialData?.features?.bathrooms || 0,
       area: initialData?.features?.area || 0,
       parking: initialData?.features?.parking || 0,
-      furnished: initialData?.features?.furnished || '',
-      floor: initialData?.features?.floor || ''
+      furnished: initialData?.features?.furnished || "",
+      floor: initialData?.features?.floor || "",
     },
     amenities: initialData?.amenities || [],
-    images: initialData?.images || []
-  })
+    images: initialData?.images || [],
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit(formData)
-  }
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  const handleAmenityToggle = (amenity: string) => {
+    setFormData(prev => ({
+      ...prev,
+      amenities: prev.amenities.includes(amenity)
+        ? prev.amenities.filter(a => a !== amenity)
+        : [...prev.amenities, amenity]
+    }));
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 bg-white p-6 rounded-lg shadow">
@@ -144,10 +173,12 @@ export default function PropertyForm({ onSubmit, isLoading, initialData }: Prope
               type="text"
               id="address"
               value={formData.location.address}
-              onChange={(e) => setFormData({
-                ...formData,
-                location: { ...formData.location, address: e.target.value }
-              })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  location: { ...formData.location, address: e.target.value },
+                })
+              }
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:outline-none focus:ring-primary"
               required
             />
@@ -160,10 +191,12 @@ export default function PropertyForm({ onSubmit, isLoading, initialData }: Prope
               type="text"
               id="city"
               value={formData.location.city}
-              onChange={(e) => setFormData({
-                ...formData,
-                location: { ...formData.location, city: e.target.value }
-              })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  location: { ...formData.location, city: e.target.value },
+                })
+              }
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:outline-none focus:ring-primary"
               required
             />
@@ -185,10 +218,15 @@ export default function PropertyForm({ onSubmit, isLoading, initialData }: Prope
                 type="number"
                 id="bedrooms"
                 value={formData.features.bedrooms}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  features: { ...formData.features, bedrooms: Number(e.target.value) }
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    features: {
+                      ...formData.features,
+                      bedrooms: Number(e.target.value),
+                    },
+                  })
+                }
                 className="mt-1 block w-full pl-10 rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:outline-none focus:ring-primary"
                 required
               />
@@ -204,10 +242,15 @@ export default function PropertyForm({ onSubmit, isLoading, initialData }: Prope
                 type="number"
                 id="bathrooms"
                 value={formData.features.bathrooms}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  features: { ...formData.features, bathrooms: Number(e.target.value) }
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    features: {
+                      ...formData.features,
+                      bathrooms: Number(e.target.value),
+                    },
+                  })
+                }
                 className="mt-1 block w-full pl-10 rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:outline-none focus:ring-primary"
                 required
               />
@@ -223,71 +266,15 @@ export default function PropertyForm({ onSubmit, isLoading, initialData }: Prope
                 type="number"
                 id="area"
                 value={formData.features.area}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  features: { ...formData.features, area: Number(e.target.value) }
-                })}
-                className="mt-1 block w-full pl-10 rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:outline-none focus:ring-primary"
-                required
-              />
-            </div>
-          </div>
-          <div>
-            <label htmlFor="parking" className="block text-sm font-medium text-gray-700">
-              Parking Spots
-            </label>
-            <div className="relative">
-              <FaParking className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="number"
-                id="parking"
-                value={formData.features.parking}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  features: { ...formData.features, parking: Number(e.target.value) }
-                })}
-                className="mt-1 block w-full pl-10 rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:outline-none focus:ring-primary"
-                required
-              />
-            </div>
-          </div>
-          <div>
-            <label htmlFor="furnished" className="block text-sm font-medium text-gray-700">
-              Furnished Status
-            </label>
-            <div className="relative">
-              <FaCouch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <select
-                id="furnished"
-                value={formData.features.furnished}
-                onChange={(e) => setFormData({
-                  ...formData,
-                    features: { ...formData.features, furnished: e.target.value }
-                })}
-                className="mt-1 block w-full pl-10 rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:outline-none focus:ring-primary"
-                required
-              >
-                <option value="">Select status</option>
-                <option value="Fully">Fully Furnished</option>
-                <option value="Semi">Semi Furnished</option>
-                <option value="Unfurnished">Unfurnished</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <label htmlFor="floor" className="block text-sm font-medium text-gray-700">
-              Floor
-            </label>
-            <div className="relative">
-              <FaBuilding className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                id="floor"
-                value={formData.features.floor}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  features: { ...formData.features, floor: e.target.value }
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    features: {
+                      ...formData.features,
+                      area: Number(e.target.value),
+                    },
+                  })
+                }
                 className="mt-1 block w-full pl-10 rounded-md border border-gray-300 px-3 py-2 focus:border-primary focus:outline-none focus:ring-primary"
                 required
               />
@@ -295,56 +282,42 @@ export default function PropertyForm({ onSubmit, isLoading, initialData }: Prope
           </div>
         </div>
       </div>
+
       {/* Amenities */}
       <div className="space-y-6">
-    <h3 className="text-lg font-medium text-gray-900">Amenities</h3>
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {Object.keys(amenityIcons).map((amenity) => {
-        const IconComponent = amenityIcons[amenity]
-        return (
-            <div key={amenity} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50">
-            <input
-                type="checkbox"
-                id={amenity}
-                checked={formData.amenities.includes(amenity)}
-                onChange={(e) => {
-                if (e.target.checked) {
-                    setFormData({
-                    ...formData,
-                    amenities: [...formData.amenities, amenity]
-                    })
-                } else {
-                    setFormData({
-                    ...formData,
-                    amenities: formData.amenities.filter(a => a !== amenity)
-                    })
-                }
-                }}
-                className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
-            />
-            <div className="flex items-center space-x-2">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                <IconComponent className="h-4 w-4 text-primary" />
-                </div>
-                <label htmlFor={amenity} className="text-sm text-gray-700">
-                {amenity}
-                </label>
-            </div>
-            </div>
-        )
-        })}
-    </div>
-</div>
+        <h3 className="text-lg font-medium text-gray-900">Amenities</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {Object.entries(amenityIcons).map(([amenity, Icon]) => (
+            <button
+              key={amenity}
+              type="button"
+              onClick={() => handleAmenityToggle(amenity)}
+              className={`flex items-center space-x-2 p-3 rounded-lg border ${
+                formData.amenities.includes(amenity)
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-gray-200 hover:border-primary/50'
+              }`}
+            >
+              <Icon className="h-5 w-5" />
+              <span>{amenity}</span>
+              {formData.amenities.includes(amenity) && (
+                <FaCheck className="h-4 w-4 ml-auto" />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Submit Button */}
       <div className="flex justify-end">
         <button
           type="submit"
           disabled={isLoading}
-          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
+          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Saving...' : 'Save Property'}
         </button>
       </div>
     </form>
-  )
+  );
 }

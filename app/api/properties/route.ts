@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 import { apiResponse } from '@/lib/api'
+import { ListingType } from '@prisma/client'
 
 // Get properties with filtering
 export async function GET(req: NextRequest) {
@@ -14,11 +15,11 @@ export async function GET(req: NextRequest) {
     const location = searchParams.get('location')
 
     const where = {
-      ...(listingType && { listingType }),
+      ...(listingType && { listingType: listingType as ListingType }),
       ...(type && { type }),
       ...(location && {
         location: {
-          path: ['city'],
+          path: ['$'],
           string_contains: location,
           mode: 'insensitive'
         }
@@ -40,6 +41,10 @@ export async function GET(req: NextRequest) {
         ]
       } : {})
     }
+    const page = Number(searchParams.get('page') ?? '1');
+    const limit = Number(searchParams.get('limit') ?? '9');
+
+    const total = await prisma.property.count({ where });
 
     const properties = await prisma.property.findMany({
       where,
@@ -47,19 +52,33 @@ export async function GET(req: NextRequest) {
         user: {
           select: {
             name: true,
-            email: true
+            email: true,
+            
           }
         }
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: {
+        createdAt: 'desc'
       }
-    })
+    });
 
-    return apiResponse(properties)
+    return apiResponse({
+      properties,
+      metadata: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
 
   } catch (error) {
+    console.error('Error fetching properties:', error);
     return apiResponse(null, 'Failed to fetch properties', 500)
   }
 }
-
 // Create new property
 export async function POST(req: NextRequest) {
   try {
@@ -81,4 +100,4 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return apiResponse(null, 'Failed to create property', 500)
   }
-} 
+}
