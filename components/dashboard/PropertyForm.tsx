@@ -82,7 +82,7 @@ export default function PropertyForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit(formData as Partial<Property>);
   };
 
   const handleAmenityToggle = (amenity: string) => {

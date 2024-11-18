@@ -24,4 +24,52 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return apiResponse(null, 'Failed to create inquiry', 500)
   }
+}
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const user = await auth(req)
+    if (!user) {
+      return apiResponse(null, 'Unauthorized', 401)
+    }
+
+    const { status } = await req.json()
+    const inquiry = await prisma.inquiry.update({
+      where: { id: params.id },
+      data: { status }
+    })
+
+    return apiResponse(inquiry)
+  } catch (error) {
+    return apiResponse(null, 'Failed to update inquiry', 500)
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const user = await auth(req)
+    if (!user) {
+      return apiResponse(null, 'Unauthorized', 401)
+    }
+
+    const inquiries = await prisma.inquiry.findMany({
+      where: user.role === 'ADMIN' ? {} : { userId: user.id },
+      include: {
+        property: true,
+        user: {
+          select: {
+            name: true,
+            email: true
+          }
+        }
+      }
+    })
+
+    return apiResponse(inquiries)
+  } catch (error) {
+    return apiResponse(null, 'Failed to fetch inquiries', 500)
+  }
 } 

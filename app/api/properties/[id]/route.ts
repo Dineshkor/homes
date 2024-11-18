@@ -105,3 +105,27 @@ export async function DELETE(
     return apiResponse(null, 'Failed to delete property', 500)
   }
 }
+
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const user = await auth(req)
+    if (!user) {
+      return apiResponse(null, 'Unauthorized', 401)
+    }
+
+    const inquiry = await prisma.inquiry.create({
+      data: {
+        propertyId: params.id,
+        userId: user.id,
+        message: (await req.json()).message
+      }
+    })
+
+    return apiResponse(inquiry)
+  } catch (error) {
+    return apiResponse(null, 'Failed to create inquiry', 500)
+  }
+}
