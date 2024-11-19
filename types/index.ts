@@ -1,3 +1,5 @@
+import { ReactNode } from "react"
+
 export interface Property {
   id: string
   title: string
@@ -14,12 +16,14 @@ export interface Property {
     }
   }
   image: string
+  images?: string[]
   features: {
     bedrooms: number
     bathrooms: number
     area: number
-    parking?: number
-    furnished?: boolean
+    parking: number
+    furnished: string
+    floor: string
   }
   type: string
   status: 'active' | 'pending' | 'sold'
@@ -27,6 +31,8 @@ export interface Property {
   isNew?: boolean
   isFeatured?: boolean
   listedAt?: string
+  amenities: string[]
+  views?: number
 }
 
 export type ListingType = 'BUY' | 'RENT'

@@ -1,7 +1,7 @@
 'use client'
 import { FaBed, FaBath, FaRulerCombined, FaParking, FaCouch, FaBuilding } from 'react-icons/fa'
 import { MdVerified } from 'react-icons/md'
-import { type Property } from '@/lib/propertyStore'
+import { type Property } from '@/types'
 
 interface PropertyDetailsProps {
   property: Property

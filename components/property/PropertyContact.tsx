@@ -13,9 +13,12 @@ interface PropertyContactProps {
     experience?: string
     properties?: string
   }
+  property: {
+    id: string
+  }
 }
 
-export default function PropertyContact({ agent }: PropertyContactProps) {
+export default function PropertyContact({ agent, property }: PropertyContactProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -34,13 +37,38 @@ export default function PropertyContact({ agent }: PropertyContactProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    // TODO: Add API integration
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    setIsSubmitting(false)
-    setFormData(prev => ({
-      ...prev,
-      message: 'I am interested in this property. Please contact me.'
-    }))
+    
+    try {
+      const response = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          propertyId: property.id,
+          message: formData.message
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to submit inquiry')
+      }
+
+      // Reset form
+      setFormData(prev => ({
+        ...prev,
+        message: 'I am interested in this property. Please contact me.'
+      }))
+
+      // Show success message (you'll need to implement this)
+      alert('Inquiry sent successfully!')
+
+    } catch (error) {
+      console.error('Error submitting inquiry:', error)
+      alert('Failed to send inquiry. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
