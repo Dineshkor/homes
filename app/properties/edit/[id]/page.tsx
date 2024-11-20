@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import PropertyForm from '@/components/dashboard/PropertyForm'
 import { useRouter } from 'next/navigation'
-import { Property } from '@/lib/propertyStore'
+import { Property } from '@/types'
 
 interface PageProps {
   params: {
